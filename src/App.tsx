@@ -19,7 +19,7 @@ function App() {
       const toolbar = document.querySelector('.canvas-toolbar') as HTMLElement | null
       if (!toolbar) return
       const rect = toolbar.getBoundingClientRect()
-      const btnH = 40
+      const btnH = 58
       setExpandBtnTop(rect.top + (rect.height - btnH) / 2)
     }
     updatePos()
@@ -112,7 +112,7 @@ function App() {
           aria-label="展开侧边栏"
           title='展开侧边栏'
         >
-          <Sparkles size={18} />
+          <Sparkles size={23} />
         </button>
       )}
       

@@ -98,6 +98,19 @@
   justify-content: center;
 }
 
+.free-canvas{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  min-height: 600px;
+  border: 1px dashed #dee2e6;
+  border-radius: 8px;
+  background-color: #ffffff;
+  background-image: linear-gradient(#f3f3f3 1px, transparent 1px), linear-gradient(90deg, #f3f3f3 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
 .empty-canvas {
   display: flex;
   align-items: center;
@@ -155,9 +168,66 @@
   transition: transform 0.2s ease;
 }
 
+.draggable-item{
+  position: absolute;
+  cursor: grab;
+}
+
+.draggable-item:active{
+  cursor: grabbing;
+}
+
 .image-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.guide-line-v{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: #2f3640;
+  pointer-events: none;
+}
+
+.guide-line-h{
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #2f3640;
+  pointer-events: none;
+}
+
+.guide-label{
+  position: absolute;
+  font-size: 12px;
+  padding: 2px 6px;
+  background: #2f3640;
+  color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+  pointer-events: none;
+  z-index: 5;
+}
+.guide-label-v{
+  transform: translate(4px, -50%);
+}
+.guide-label-h{
+  transform: translate(-50%, 4px);
+}
+.guide-connector-v{
+  position: absolute;
+  height: 0;
+  border-top: 1px dashed #2f3640;
+  pointer-events: none;
+}
+.guide-connector-h{
+  position: absolute;
+  width: 0;
+  border-left: 1px dashed #2f3640;
+  pointer-events: none;
 }
 
 .image-item img {
@@ -178,6 +248,39 @@
 
 .image-item:hover .image-overlay {
   opacity: 1;
+}
+
+.dbl-hint{
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 12px;
+  background: rgba(255,255,255,0.9);
+  color: #495057;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.image-item:hover .dbl-hint{
+  opacity: 1;
+}
+
+.dbl-ripple{
+  position: absolute;
+  border: 2px solid rgba(0,123,255,0.6);
+  border-radius: 9999px;
+  pointer-events: none;
+  animation: dbl-ripple 600ms ease-out forwards;
+}
+
+@keyframes dbl-ripple{
+  from { transform: scale(0.2); opacity: 0.8; }
+  to { transform: scale(1.6); opacity: 0; }
 }
 
 .image-overlay.open {
@@ -252,6 +355,8 @@
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
+
+
 
 .generating-placeholder {
   display: flex;

@@ -49,12 +49,17 @@ const Storyboard: React.FC<StoryboardProps> = ({ images, isGenerating, script })
             
             <div className="frame-content">
               {images[index] ? (
-                <img 
-                  src={images[index]} 
-                  alt={`Frame ${index + 1}`}
-                  className="frame-image"
-                  onClick={(e) => openByElement(e.currentTarget)}
-                />
+                <div className="image-item" style={{ width: '100%', height: '100%' }}>
+                  <img 
+                    src={images[index]} 
+                    alt={`Frame ${index + 1}`}
+                    className="frame-image"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation() }}
+                    onClickCapture={(e) => { e.preventDefault(); e.stopPropagation() }}
+                    onDoubleClick={(e) => openByElement(e.currentTarget)}
+                  />
+                  <div className="dbl-hint">双击预览</div>
+                </div>
               ) : isGenerating ? (
                 <div className="frame-generating">
                   <div className="generating-indicator">

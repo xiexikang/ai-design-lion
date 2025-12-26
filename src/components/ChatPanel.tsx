@@ -382,7 +382,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
               </div>
             )}
             <div className="input-actions">
-              <button className="input-btn" disabled={isGenerating} onClick={handleUploadClick}>
+              <button className="input-btn" title="上传图片" disabled={isGenerating} onClick={handleUploadClick}>
                 <Paperclip size={16} />
               </button>
               <button 
@@ -411,7 +411,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
                 </button>
               </div>
               <div className='auth-reg-link'>
-                <span>注册链接：</span>
+                <span>注册链接(免费使用)：</span>
                 <a href="https://s.qiniu.com/FbMvqa" target="_blank" rel="noopener noreferrer">https://s.qiniu.com/FbMvqa</a>
               </div>
               <form className="auth-form" onSubmit={(e) => { e.preventDefault(); qiniuAIAPIService.setApiKey(apiKeyInput.trim()); setKeyModalOpen(false) }}>
@@ -421,7 +421,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
                     type="password"
                     value={apiKeyInput}
                     onChange={(e) => setApiKeyInput(e.target.value)}
-                    placeholder="请输入七牛云秘钥"
+                    placeholder="请输入秘钥"
                     required
                   />
                 </div>

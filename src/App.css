@@ -46,11 +46,11 @@ body {
   position: fixed;
   right: 16px;
   z-index: 1001;
-  width: 40px;
-  height: 40px;
+  width: 58px;
+  height: 58px;
   border-radius: 8px;
   background-color: #ffffff;
-  border: 1px solid #dee2e6;
+  border: 1px solid #c1c5cc;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   display: flex;

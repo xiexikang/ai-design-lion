@@ -1,6 +1,11 @@
 // API配置
+const ENV = (typeof import.meta !== 'undefined' ? (import.meta as unknown as { env?: Record<string, string> }) : undefined)
+
 export const API_CONFIG = {
-  baseURL: 'http://localhost:8080/api/v1',
+  baseURL:
+    ENV?.env?.VITE_API_BASE_URL ||
+    ENV?.env?.REACT_APP_API_BASE_URL ||
+    'http://localhost:8080/api/v1',
   timeout: 30000,
 }
 

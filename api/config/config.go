@@ -1,15 +1,16 @@
 package config
 
 import (
-    "log"
-    "os"
-    "time"
-    "strings"
+	"log"
+	"os"
+	"strings"
+	"time"
 
-    "ai-design-backend/storage"
-    "github.com/gin-contrib/cors"
-    "github.com/gin-gonic/gin"
-    "github.com/joho/godotenv"
+	"ai-design-backend/storage"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -18,28 +19,28 @@ var (
 )
 
 type AppConfig struct {
-	Port            string
-	JWTSecret       string
-	QiniuAPIKey     string
-	QiniuBaseURL    string
-	Environment     string
-	MaxImageSize    int64
-	AllowedOrigins  []string
+    Port           string
+    JWTSecret      string
+    QiniuAPIKey    string
+    QiniuBaseURL   string
+    Environment    string
+    MaxImageSize   int64
+    AllowedOrigins []string
 }
 
 func InitConfig() {
 	// 加载环境变量
 	godotenv.Load()
-	
-	Config = &AppConfig{
-		Port:            getEnv("PORT", "8080"),
-		JWTSecret:       getEnv("JWT_SECRET", "your-jwt-secret-key"),
-		QiniuAPIKey:     getEnv("QINIU_API_KEY", "your-api-key-here"),
-		QiniuBaseURL:    getEnv("QINIU_BASE_URL", "https://api.qnaigc.com/v1"),
-		Environment:     getEnv("ENVIRONMENT", "development"),
-		MaxImageSize:    10 * 1024 * 1024, // 10MB
-        AllowedOrigins:  []string{"http://localhost:5173", "http://localhost:3000", "http://localhost:6677", "http://127.0.0.1:6677"},
-	}
+
+    Config = &AppConfig{
+        Port:           getEnv("PORT", "8080"),
+        JWTSecret:      getEnv("JWT_SECRET", "your-jwt-secret-key"),
+        QiniuAPIKey:    getEnv("QINIU_API_KEY", "your-api-key-here"),
+        QiniuBaseURL:   getEnv("QINIU_BASE_URL", "https://api.qnaigc.com/v1"),
+        Environment:    getEnv("ENVIRONMENT", "development"),
+        MaxImageSize:   10 * 1024 * 1024,
+        AllowedOrigins: getEnvList("ALLOWED_ORIGINS", []string{"http://localhost:5173", "http://localhost:3000", "http://localhost:6677", "http://127.0.0.1:6677"}),
+    }
 }
 
 func InitDB() {
@@ -62,9 +63,17 @@ func GetPort() string {
 
 func CORSMiddleware() gin.HandlerFunc {
     return cors.New(cors.Config{
-        AllowOrigins:     Config.AllowedOrigins,
+        AllowOrigins: Config.AllowedOrigins,
         AllowOriginFunc: func(origin string) bool {
-            return strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:")
+            if strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:") || strings.HasPrefix(origin, "https://localhost:") || strings.HasPrefix(origin, "https://127.0.0.1:") {
+                return true
+            }
+            for _, o := range Config.AllowedOrigins {
+                if strings.TrimSpace(o) == origin {
+                    return true
+                }
+            }
+            return false
         },
         AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
         AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Requested-With"},
@@ -75,8 +84,25 @@ func CORSMiddleware() gin.HandlerFunc {
 }
 
 func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
+    if value := os.Getenv(key); value != "" {
+        return value
+    }
+    return defaultValue
+}
+
+func getEnvList(key string, defaultValue []string) []string {
+    if value := os.Getenv(key); value != "" {
+        parts := strings.Split(value, ",")
+        var list []string
+        for _, p := range parts {
+            s := strings.TrimSpace(p)
+            if s != "" {
+                list = append(list, s)
+            }
+        }
+        if len(list) > 0 {
+            return list
+        }
+    }
+    return defaultValue
 }

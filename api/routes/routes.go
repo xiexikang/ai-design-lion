@@ -8,23 +8,26 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine) {
-	// 健康检查
-	router.GET("/health", handlers.HealthCheck)
+    // 健康检查
+    router.GET("/health", handlers.HealthCheck)
 
-	// API路由组
-	api := router.Group("/api/v1")
-	{
-		// 公开路由
-		api.POST("/auth/register", handlers.Register)
-		api.POST("/auth/login", handlers.Login)
+    // API路由组
+    api := router.Group("/api/v1")
+    {
+        // 公开路由
+        api.POST("/auth/register", handlers.Register)
+        api.POST("/auth/login", handlers.Login)
+        api.POST("/proxy/images/generations", handlers.ProxyGenerateImage)
+        api.POST("/proxy/images/edits", handlers.ProxyEditImage)
+        api.GET("/proxy/models", handlers.ProxyModels)
 
-		// 需要认证的路由
-		protected := api.Group("")
-		protected.Use(middleware.JWTAuth())
-		{
-			// 用户相关
-			protected.GET("/user/profile", handlers.GetUserProfile)
-			protected.PUT("/user/profile", handlers.UpdateUserProfile)
+        // 需要认证的路由
+        protected := api.Group("")
+        protected.Use(middleware.JWTAuth())
+        {
+            // 用户相关
+            protected.GET("/user/profile", handlers.GetUserProfile)
+            protected.PUT("/user/profile", handlers.UpdateUserProfile)
 
 			// 项目相关
 			protected.GET("/projects", handlers.GetProjects)

@@ -619,6 +619,14 @@
   background: #e9ecef;
 }
 
+.preview-card img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
 .preview-card.pc1 { left: 0; top: 0; transform: rotate(-4deg); }
 .preview-card.pc2 { left: 38px; top: 0; background: #ffe8a1; transform: rotate(2deg); }
 .preview-card.pc3 { left: 76px; top: 0; background: #ffd5d5; transform: rotate(-1deg); }

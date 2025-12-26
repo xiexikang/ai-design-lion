@@ -9,6 +9,12 @@ export default defineConfig({
   build: {
     sourcemap: 'hidden',
   },
+   server: {
+      hmr: true,
+      host: '0.0.0.0',
+      port: 6688,
+      strictPort: true,
+    },
    resolve: {
       // 别名
       alias: {

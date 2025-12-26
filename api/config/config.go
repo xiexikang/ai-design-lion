@@ -1,14 +1,15 @@
 package config
 
 import (
-	"log"
-	"os"
-	"time"
+    "log"
+    "os"
+    "time"
+    "strings"
 
-	"ai-design-backend/storage"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+    "ai-design-backend/storage"
+    "github.com/gin-contrib/cors"
+    "github.com/gin-gonic/gin"
+    "github.com/joho/godotenv"
 )
 
 var (
@@ -37,7 +38,7 @@ func InitConfig() {
 		QiniuBaseURL:    getEnv("QINIU_BASE_URL", "https://api.qnaigc.com/v1"),
 		Environment:     getEnv("ENVIRONMENT", "development"),
 		MaxImageSize:    10 * 1024 * 1024, // 10MB
-		AllowedOrigins:  []string{"http://localhost:5173", "http://localhost:3000"},
+        AllowedOrigins:  []string{"http://localhost:5173", "http://localhost:3000", "http://localhost:6677", "http://127.0.0.1:6677"},
 	}
 }
 
@@ -60,14 +61,17 @@ func GetPort() string {
 }
 
 func CORSMiddleware() gin.HandlerFunc {
-	return cors.New(cors.Config{
-		AllowOrigins:     Config.AllowedOrigins,
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Requested-With"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	})
+    return cors.New(cors.Config{
+        AllowOrigins:     Config.AllowedOrigins,
+        AllowOriginFunc: func(origin string) bool {
+            return strings.HasPrefix(origin, "http://localhost:") || strings.HasPrefix(origin, "http://127.0.0.1:")
+        },
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Requested-With"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour,
+    })
 }
 
 func getEnv(key, defaultValue string) string {

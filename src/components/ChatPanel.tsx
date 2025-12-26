@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Send, Paperclip, Mic, Settings, Share2, Minimize2, X } from 'lucide-react'
+import { Send, Paperclip, Settings, Minimize2, X } from 'lucide-react'
 import './ChatPanel.css'
 import './AuthModal.css'
 import { useViewer } from '../hooks/useViewer'
@@ -16,6 +16,14 @@ interface Message {
   timestamp: Date
   images?: string[]
   template?: string
+}
+
+interface Template {
+  id: string
+  title: string
+  subtitle: string
+  prompt: string
+  previewImages: string[]
 }
 
 interface ChatPanelProps {
@@ -49,15 +57,30 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
     return ''
   })
 
-  const [templates, setTemplates] = useState<{
-    id: string;
-    title: string;
-    subtitle: string;
-    prompt: string;
-  }[]>([
-    { id: 'poster', title: '海报', subtitle: '现代字体海报', prompt: '设计一张现代风格的字体海报，使用渐变背景与强烈层次' },
-    { id: 'logo', title: '标志', subtitle: '极简品牌标志', prompt: '为一家科技初创公司设计一个极简几何风格的Logo' },
-    { id: 'book', title: '书籍封面', subtitle: '编辑风格', prompt: '设计一本书籍封面，使用衬线字体与平衡的版式布局' },
+  const getPreviewImages = (key: string): string[] => {
+    const mk = (seed: string) => `https://picsum.photos/seed/${seed}/64/72`
+    const map: Record<string, string[]> = {
+      poster: [mk('poster-1'), mk('poster-2'), mk('poster-3')],
+      logo: [mk('logo-1'), mk('logo-2'), mk('logo-3')],
+      book: [mk('book-1'), mk('book-2'), mk('book-3')],
+      wine: [mk('wine-1'), mk('wine-2'), mk('wine-3')],
+      promotion: [mk('promotion-1'), mk('promotion-2'), mk('promotion-3')],
+      landing: [mk('landing-1'), mk('landing-2'), mk('landing-3')],
+      app: [mk('app-1'), mk('app-2'), mk('app-3')],
+      album: [mk('album-1'), mk('album-2'), mk('album-3')],
+      storyboard: [mk('storyboard-1'), mk('storyboard-2'), mk('storyboard-3')],
+      banner: [mk('banner-1'), mk('banner-2'), mk('banner-3')],
+      menu: [mk('menu-1'), mk('menu-2'), mk('menu-3')],
+      travel: [mk('travel-1'), mk('travel-2'), mk('travel-3')],
+      coffee: [mk('coffee-1'), mk('coffee-2'), mk('coffee-3')],
+    }
+    return map[key] || [mk(`${key}-a`), mk(`${key}-b`), mk(`${key}-c`)]
+  }
+
+  const [templates, setTemplates] = useState<Template[]>([
+    { id: 'poster', title: '海报', subtitle: '现代字体海报', prompt: '设计一张现代风格的字体海报，使用渐变背景与强烈层次', previewImages: getPreviewImages('poster') },
+    { id: 'logo', title: '标志', subtitle: '极简品牌标志', prompt: '为一家科技初创公司设计一个极简几何风格的Logo', previewImages: getPreviewImages('logo') },
+    { id: 'book', title: '书籍封面', subtitle: '编辑风格', prompt: '设计一本书籍封面，使用衬线字体与平衡的版式布局', previewImages: getPreviewImages('book') },
   ])
 
   const generateRandomTemplates = () => {
@@ -85,11 +108,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
       }
       return res
     }
-    return pick(3).map((p, idx) => ({
+    return pick(3).map((p, idx): Template => ({
       id: `${Date.now()}-${idx}-${Math.floor(Math.random()*1000)}`,
       title: p.title,
       subtitle: p.subtitle,
-      prompt: p.prompt
+      prompt: p.prompt,
+      previewImages: getPreviewImages(p.id)
     }))
   }
 
@@ -127,11 +151,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
     setUploadedImage(null)
   }
 
-  const handleTemplateSelect = (template: any) => {
+  const handleTemplateSelect = (template: Template) => {
     setSelectedTemplate(template.id)
   }
 
-  const handleTemplateUse = (template: any) => {
+  const handleTemplateUse = (template: Template) => {
     setSelectedTemplate(template.id)
     setInputValue(template.prompt)
   }
@@ -253,9 +277,15 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
                   </button>
                 </div>
                 <div className="template-preview">
-                  <div className="preview-card pc1" />
-                  <div className="preview-card pc2" />
-                  <div className="preview-card pc3" />
+                  <div className="preview-card pc1">
+                    <img src={template.previewImages[0]} alt={`${template.title} preview 1`} />
+                  </div>
+                  <div className="preview-card pc2">
+                    <img src={template.previewImages[1]} alt={`${template.title} preview 2`} />
+                  </div>
+                  <div className="preview-card pc3">
+                    <img src={template.previewImages[2]} alt={`${template.title} preview 3`} />
+                  </div>
                 </div>
               </div>
             ))}

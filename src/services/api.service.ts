@@ -1,4 +1,5 @@
 import { QINIU_CONFIG, SUPPORTED_MODELS, IMAGE_SIZES } from './api.types'
+import { encryptString, decryptString } from '../utils/crypto'
 import type { GenerateImageRequest, GenerateImageResponse, ImageEditRequest } from './api.types'
 
 class QiniuAIAPIService {
@@ -7,39 +8,72 @@ class QiniuAIAPIService {
 
   constructor() {
     this.baseURL = QINIU_CONFIG.baseURL
-    const stored = typeof window !== 'undefined' ? localStorage.getItem('qiniu_api_key') : null
-    this.apiKey = stored || QINIU_CONFIG.apiKey
-  }
-
-  setApiKey(key: string) {
-    this.apiKey = key
+    this.apiKey = QINIU_CONFIG.apiKey || ''
     if (typeof window !== 'undefined') {
-      if (key) {
-        localStorage.setItem('qiniu_api_key', key)
-      } else {
-        localStorage.removeItem('qiniu_api_key')
+      const enc = localStorage.getItem('qiniu_api_key_enc')
+      if (enc) {
+        try {
+          const parsed = JSON.parse(enc)
+          decryptString(parsed).then(v => { this.apiKey = v || this.apiKey }).catch((_e) => { void 0 })
+        } catch (_err) { void 0 }
       }
     }
   }
 
+  async setApiKey(key: string) {
+    this.apiKey = key || ''
+    if (typeof window !== 'undefined') {
+      if (key) {
+        const payload = await encryptString(key)
+        localStorage.setItem('qiniu_api_key_enc', JSON.stringify(payload))
+      } else {
+        localStorage.removeItem('qiniu_api_key_enc')
+      }
+    }
+  }
+
+  private async getApiKey(): Promise<string> {
+    let key = this.apiKey || ''
+    if (typeof window !== 'undefined') {
+      const enc = localStorage.getItem('qiniu_api_key_enc')
+      if (enc) {
+        try {
+          const parsed = JSON.parse(enc)
+          const v = await decryptString(parsed)
+          key = v || key
+        } catch (_err) { void 0 }
+      }
+    }
+    return key
+  }
+
   private async makeRequest(endpoint: string, data: any): Promise<any> {
     try {
+      const apiKey = await this.getApiKey()
       const response = await fetch(`${this.baseURL}${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`
+          'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify(data)
       })
 
       if (!response.ok) {
         const error = await response.json().catch(() => ({ error: 'Unknown error' }))
-        throw new Error(`API Error: ${error.error?.message || error.error || response.statusText}`)
+        const rawMsg = error.error?.message || error.error || response.statusText
+        const errType = error.error?.type || 'error'
+        const friendly = errType === 'authentication_error' ? '七牛云鉴权失败，请检查 API Key' : `请求失败: ${rawMsg}`
+        window.dispatchEvent(new CustomEvent('api-error', { detail: { message: friendly, type: 'error', source: 'qiniu' } }))
+        throw new Error(`API Error: ${rawMsg}`)
       }
 
       return await response.json()
     } catch (error) {
+      const msg = error instanceof Error ? error.message : '网络异常'
+      if (!(msg || '').startsWith('API Error:')) {
+        window.dispatchEvent(new CustomEvent('api-error', { detail: { message: '网络异常，请稍后重试', type: 'error', source: 'qiniu' } }))
+      }
       console.error('API Request failed:', error)
       throw error
     }
@@ -129,10 +163,11 @@ class QiniuAIAPIService {
    */
   async getModels(): Promise<any[]> {
     try {
+      const apiKey = await this.getApiKey()
       const response = await fetch(`${this.baseURL}/models`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${this.apiKey}`
+          'Authorization': `Bearer ${apiKey}`
         }
       })
 

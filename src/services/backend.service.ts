@@ -56,8 +56,11 @@ class BackendAPIService {
     } catch (error) {
       clearTimeout(timeoutId)
       if (error instanceof Error && error.name === 'AbortError') {
+        window.dispatchEvent(new CustomEvent('api-error', { detail: { message: '请求超时，请稍后重试', type: 'error', source: 'backend' } }))
         throw new Error('Request timeout')
       }
+      const msg = error instanceof Error ? error.message : '请求异常'
+      window.dispatchEvent(new CustomEvent('api-error', { detail: { message: msg, type: 'error', source: 'backend' } }))
       throw error
     }
   }

@@ -56,6 +56,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
     }
     return ''
   })
+  const [saveTipVisible, setSaveTipVisible] = useState(false)
 
   const getPreviewImages = (key: string): string[] => {
     const mk = (seed: string) => `https://picsum.photos/seed/${seed}/64/72`
@@ -411,10 +412,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
                 </button>
               </div>
               <div className='auth-reg-link'>
-                <span>注册链接(免费使用)：</span>
+                <span>为更好体验，请注册并填入key(免费使用哦)：</span>
                 <a href="https://s.qiniu.com/FbMvqa" target="_blank" rel="noopener noreferrer">https://s.qiniu.com/FbMvqa</a>
               </div>
-              <form className="auth-form" onSubmit={(e) => { e.preventDefault(); qiniuAIAPIService.setApiKey(apiKeyInput.trim()); setKeyModalOpen(false) }}>
+              <form className="auth-form" onSubmit={(e) => { e.preventDefault(); qiniuAIAPIService.setApiKey(apiKeyInput.trim()); setKeyModalOpen(false); setSaveTipVisible(true); setTimeout(() => setSaveTipVisible(false), 2000) }}>
                 <div className="form-group">
                   <label>API Key</label>
                   <input
@@ -429,6 +430,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ onGenerateImage, isGenerating, is
               </form>
             </div>
           </div>
+        )}
+        {saveTipVisible && (
+          <div className="save-tip" role="status" aria-live="polite">保存成功</div>
         )}
       </div>
     </article>

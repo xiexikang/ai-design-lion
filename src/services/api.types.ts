@@ -4,10 +4,7 @@ export const QINIU_CONFIG = {
     (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_QINIU_BASE_URL) ||
     (typeof import.meta !== 'undefined' && (import.meta as any).env?.REACT_APP_API_BASE_URL) ||
     'https://api.qnaigc.com/v1',
-  apiKey:
-    (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_QINIU_API_KEY) ||
-    (typeof import.meta !== 'undefined' && (import.meta as any).env?.REACT_APP_QINIU_API_KEY) ||
-    ''
+  apiKey: ''
 }
 
 // 支持的模型列表

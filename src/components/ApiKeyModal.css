@@ -1,0 +1,73 @@
+.akm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.akm-modal {
+  width: 420px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+  color: #111827;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.akm-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.akm-desc {
+  margin-top: 6px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.akm-desc a { color: #3b82f6; text-decoration: underline; }
+
+.akm-input {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  outline: none;
+}
+
+.akm-error {
+  margin-top: 8px;
+  color: #dc2626;
+  font-size: 12px;
+}
+
+.akm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+
+.akm-btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #2f3640;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+.akm-secondary {
+  background: #f3f4f6;
+  color: #111827;
+  border: 1px solid #e5e7eb;
+}
+

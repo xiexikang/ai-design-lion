@@ -4,6 +4,8 @@ import ChatPanel from './components/ChatPanel'
 import { qiniuAIAPIService } from './services/api.service'
 import { SUPPORTED_MODELS } from './services/api.types'
 import './App.css'
+import ToastContainer from './components/ToastContainer'
+import ApiKeyModal from './components/ApiKeyModal'
 import { Sparkles } from 'lucide-react'
 
 function App() {
@@ -13,6 +15,7 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [expandBtnTop, setExpandBtnTop] = useState<number>(72)
+  const [isApiKeyOpen, setIsApiKeyOpen] = useState(false)
 
   useEffect(() => {
     const updatePos = () => {
@@ -27,6 +30,13 @@ function App() {
     return () => window.removeEventListener('resize', updatePos)
   }, [isSidebarCollapsed])
   
+  useEffect(() => {
+    const enc = typeof window !== 'undefined' ? localStorage.getItem('qiniu_api_key_enc') : null
+    if (!enc) {
+      setIsApiKeyOpen(true)
+    }
+    return () => {}
+  }, [])
 
   
 
@@ -80,7 +90,7 @@ function App() {
         }
         return []
       }
-    } catch (error) {
+    } catch {
       const mockImage = `https://trae-api-sg.mchost.guru/api/ide/v1/text_to_image?prompt=${encodeURIComponent(prompt)}&image_size=square`
       setGeneratedImages(prev => [...prev, mockImage])
       return [mockImage]
@@ -97,6 +107,8 @@ function App() {
 
   return (
     <div className={`app ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      <ToastContainer />
+      <ApiKeyModal open={isApiKeyOpen} onClose={() => setIsApiKeyOpen(false)} />
       {/* 移动端菜单按钮 */}
       <button 
         className="mobile-menu-btn"

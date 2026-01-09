@@ -55,3 +55,8 @@ export default tseslint.config({
   },
 })
 ```
+
+
+## 许可证 License
+
+This project is licensed under the MIT License.

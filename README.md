@@ -10,6 +10,14 @@
 - JWT 认证与受保护的后端接口（暂不需要）
 - Vercel 前端部署与后端 API 重写支持
 
+## 博客地址
+https://blog.csdn.net/weixin_42211816/article/details/156639524
+
+## 项目截图
+<img width="1899" height="934" alt="image" src="https://github.com/user-attachments/assets/d1b1e66d-38e9-4a41-9dc4-8126af422a0a" />
+<img width="1898" height="937" alt="image" src="https://github.com/user-attachments/assets/2f0c3316-ade3-42d0-a009-af7908a7614f" />
+
+
 ## 技术栈
 
 - 前端：React 18、TypeScript、Vite、Tailwind CSS、Zustand、Lucide Icons

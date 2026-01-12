@@ -106,18 +106,6 @@ VITE_QINIU_BASE_URL=https://api.qnaigc.com/v1
 
 > 提示：前端也支持直接调用七牛云接口（`src/services/api.service.ts`），或通过后端代理（`/api/v1/proxy/*`）。
 
-## 部署与重写
-
-- 前端可部署到 Vercel，`vercel.json` 已配置将 `/api/*` 重写到后端：
-
-```json
-{
-  "rewrites": [
-    { "source": "/api/:path*", "destination": "http://111.230.175.125:8080/api/v1/:path*" }
-  ]
-}
-```
-
 - 生产环境建议：
   - 使用真实数据库与持久化存储
   - 配置 `ALLOWED_ORIGINS` 与 `JWT_SECRET`
